@@ -1,5 +1,8 @@
+using HotelListing.Data;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
+using System.Configuration;
 
 Log.Logger = new LoggerConfiguration().WriteTo.File(path: "C:\\Users\\sushi\\Desktop\\Logs\\logs-.txt",
 	outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:1j}{NewLine}{Exception}",
@@ -10,6 +13,7 @@ builder.Host.UseSerilog();
 
 // Add services to the container.
 
+builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HotelListing")));
 builder.Services.AddControllers();
 builder.Services.AddCors(o =>
 {
