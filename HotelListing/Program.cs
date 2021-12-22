@@ -13,7 +13,7 @@ builder.Host.UseSerilog();
 
 // Add services to the container.
 
-builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HotelListing")));
+builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 builder.Services.AddCors(o =>
 {
