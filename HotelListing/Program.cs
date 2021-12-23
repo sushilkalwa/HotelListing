@@ -1,4 +1,7 @@
+using HotelListing.Configurations;
 using HotelListing.Data;
+using HotelListing.IRepository;
+using HotelListing.Repository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -14,7 +17,10 @@ builder.Host.UseSerilog();
 // Add services to the container.
 
 builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddControllers();
+
+builder.Services.AddControllers().AddNewtonsoftJson(op=>
+			op.SerializerSettings.ReferenceLoopHandling=Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 builder.Services.AddCors(o =>
 {
 	o.AddPolicy("AllowAll", builder =>
@@ -22,6 +28,10 @@ builder.Services.AddCors(o =>
 	 .AllowAnyMethod()
 	 .AllowAnyHeader());
 });
+
+builder.Services.AddAutoMapper(typeof(MaperInitilizer));
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
