@@ -1,8 +1,11 @@
+using HotelListing;
 using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.IRepository;
 using HotelListing.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using System.Configuration;
@@ -17,6 +20,9 @@ builder.Host.UseSerilog();
 // Add services to the container.
 
 builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAuthentication();
+builder.Services.ConfigureIdentity();
 
 builder.Services.AddControllers().AddNewtonsoftJson(op=>
 			op.SerializerSettings.ReferenceLoopHandling=Newtonsoft.Json.ReferenceLoopHandling.Ignore);
