@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.IRepository;
 using HotelListing.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,8 @@ namespace HotelListing.Controllers
 				return StatusCode(500, "Please try again!");
 			}
 		}
+
+		[Authorize]
 		[HttpGet("{id:int}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
