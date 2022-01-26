@@ -85,5 +85,66 @@ namespace HotelListing.Controllers
 				return StatusCode(500, "Please try again!");
 			}
 		}
+		[HttpPut("{id:int}")]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> UpdateHotel(int id, [FromHeader] UpdateHotelDTO updateHotelDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				_logger.LogError($"Invalid hotel record{nameof(UpdateHotel)}");
+				return BadRequest(ModelState);
+			}
+
+			try
+			{
+				var hotel = await _unitofwork.Hotels.Get(q => q.Id == id);
+				if (hotel == null || id < 1)
+				{
+					_logger.LogError($"Invalid hotel record{nameof(UpdateHotel)}");
+					return BadRequest(ModelState);
+				}
+				_mapper.Map(updateHotelDTO, hotel);
+				_unitofwork.Hotels.Update(hotel);
+				await _unitofwork.Save();
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"Somethin went wrong in {nameof(HotelController.UpdateHotel)}");
+				return StatusCode(500, "Please try again!");
+			}
+		}
+
+		[Authorize]
+		[HttpDelete("{id:int}")]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> DeleteHotel(int id)
+		{
+			if (!ModelState.IsValid)
+			{
+				_logger.LogError($"Invalid Delete attempt in {nameof(DeleteHotel)}");
+				return BadRequest(ModelState);
+			}
+			try
+			{
+				var hotel = await _unitofwork.Hotels.Get(q => q.Id == id);
+				if (hotel == null)
+				{
+					_logger.LogError($"Invalid Delete attempt in {nameof(DeleteHotel)}");
+					return BadRequest("Submitted Data is Invalid!");
+				}
+				await _unitofwork.Hotels.Delete(id);
+				await _unitofwork.Save();
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"Somethin went wrong in {nameof(HotelController.DeleteHotel)}");
+				return StatusCode(500, "Please try again!");
+			}
+		}
 	}
 }
